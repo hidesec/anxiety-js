@@ -4,9 +4,9 @@
         "es2021": true
     },
     "extends": [
-        "google",
         "eslint:recommended",
-        "plugin:@typescript-eslint/recommended"
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/eslint-recommended"
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
@@ -18,7 +18,16 @@
     ],
     "rules": {
         "@typescript-eslint/no-unused-vars": "error",
-        // to enforce using type for object type definitions, can be type or interface
-        "@typescript-eslint/consistent-type-definitions": ["error", "type"]
+        // // to enforce using type for object type definitions, can be type or interface
+        "@typescript-eslint/consistent-type-definitions": ["error", "type"],
+        "require-jsdoc": ["error", {
+            "require": {
+                "FunctionDeclaration": true,
+                "MethodDefinition": false,
+                "ClassDeclaration": false,
+                "ArrowFunctionExpression": false,
+                "FunctionExpression": false
+            }
+        }]
     }
 }
