@@ -1,8 +1,11 @@
-export type RouteDefinitionInterface = {
-    // path to route
-    path: string;
-    // HTTP Request method
-    requestMethod: 'get' | 'post' | 'delete' | 'options' | 'put';
-    // Method name within our class responsible for this route
-    methodName: string | symbol;
+export interface RouteDefinition {
+  path: string;
+  method: 'get' | 'post' | 'put' | 'delete' | 'patch' | 'options' | 'head';
+  methodName: string;
+  middlewares?: Function[];
+}
+
+export interface MiddlewareDefinition {
+  target: Function;
+  middlewares: Function[];
 }
