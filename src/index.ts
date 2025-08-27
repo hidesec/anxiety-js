@@ -1,56 +1,22 @@
-import 'reflect-metadata';
-import express, { Request, Response } from 'express';
-import { controllers } from './controllers';
-import { RouterEngine } from './core/router/router-engine';
+// Core framework exports
+export * from './core';
 
-const app = express();
+// HTTP functionality
+export * from './http';
 
-// Middleware untuk parsing JSON
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Middleware functionality
+export * from './middleware';
 
-// Route utama
-app.get('/', (req: Request, res: Response) => {
-  res.json({
-    message: 'Hello there! Welcome to Anxiety Framework',
-    version: '1.0.0',
-    timestamp: new Date().toISOString()
-  });
-});
+// Common utilities and decorators
+export * from './common';
 
-// Inisialisasi RouterEngine
-const routerEngine = new RouterEngine();
+// Shared types, constants, and enums
+export * from './shared/constants';
+export * from './shared/enums';
+export * from './shared/types';
 
-// Register semua controller
-controllers.forEach((controller) => {
-  routerEngine.registerController(controller);
-});
+// Application modules
+export * from './modules/app.module';
 
-// Gunakan router dari RouterEngine
-app.use(routerEngine.getRouter());
-
-// Error handling middleware
-app.use((error: any, req: Request, res: Response, next: any) => {
-  console.error('Error occurred:', error);
-  res.status(500).json({
-    error: 'Internal Server Error',
-    message: error.message || 'Something went wrong!',
-    timestamp: new Date().toISOString()
-  });
-});
-
-// 404 handler
-app.use('*', (req: Request, res: Response) => {
-  res.status(404).json({
-    error: 'Not Found',
-    message: `Route ${req.method} ${req.originalUrl} not found`,
-    timestamp: new Date().toISOString()
-  });
-});
-
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log(`🚀 Anxiety Framework is running on port ${PORT}!`);
-  console.log(`📱 Server URL: http://localhost:${PORT}`);
-});
+// For backward compatibility, also export the createApp function
+export { createApp } from './app';
