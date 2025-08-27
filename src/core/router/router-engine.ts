@@ -1,21 +1,29 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import 'reflect-metadata';
-import { RouteDefinition } from '../../package/interface/decorator/http-interface/RouteDefinition.interface';
-import { AnxietyRequest, AnxietyResponse } from '../../package/interface/middleware/middleware.interface';
-import { ROUTES_METADATA } from '../../package/decorators/http/request-map.decorator';
-import { MIDDLEWARE_METADATA } from '../../package/decorators/middleware/use-middleware.decorator';
-import { ROUTE_PARAM_METADATA, ParamMetadata } from '../../package/decorators/http/route-param.decorator';
+import { RouteDefinition } from '../../http/interfaces/route-definition.interface';
+import { AnxietyRequest, AnxietyResponse } from '../../middleware/interfaces/middleware.interface';
+import { ROUTES_METADATA } from '../../http/decorators/request-mapping.decorator';
+import { MIDDLEWARE_METADATA } from '../../middleware/decorators/use-middleware.decorator';
+import { ROUTE_PARAM_METADATA, ParamMetadata } from '../../http/decorators/route-params.decorator';
 
+/**
+ * Router engine responsible for registering controllers and their routes
+ */
 export class RouterEngine {
   private router = Router();
 
+  /**
+   * Register a controller with the router engine
+   * @param controllerClass - Controller class to register
+   * @param basePath - Optional base path for all routes
+   */
   registerController(controllerClass: any, basePath: string = ''): void {
     const controllerInstance = new controllerClass();
     const routes: RouteDefinition[] = Reflect.getMetadata(ROUTES_METADATA, controllerClass) || [];
     const classMiddlewares: Function[] = Reflect.getMetadata(MIDDLEWARE_METADATA, controllerClass) || [];
     const controllerPrefix: string = Reflect.getMetadata('controller_prefix', controllerClass) || '';
 
-    // Sort: static routes first, then dynamic
+    // Sort routes: static routes first, then dynamic routes
     routes.sort((a, b) => {
       const aIsDynamic = a.path.includes(':');
       const bIsDynamic = b.path.includes(':');
@@ -33,11 +41,19 @@ export class RouterEngine {
 
       const handler = this.createRouteHandler(controllerInstance, route.methodName);
 
-      console.log(`Registering route: ${route.method.toUpperCase()} ${fullPath}`);
+      // Only log route registration in non-test environments
+      if (process.env.NODE_ENV !== 'test') {
+        console.log(`🛣️  Registering route: ${route.method.toUpperCase()} ${fullPath}`);
+      }
       this.router[route.method](fullPath, ...expressMiddlewares, handler);
     });
   }
 
+  /**
+   * Combine multiple path segments into a single path
+   * @param paths - Path segments to combine
+   * @returns Combined path
+   */
   private combinePaths(...paths: string[]): string {
     const cleanPaths = paths
       .filter(path => path && path.trim() !== '')
@@ -47,6 +63,11 @@ export class RouterEngine {
     return result === '/' ? '/' : result.replace(/\/$/, '');
   }
 
+  /**
+   * Create Express middleware from Anxiety middleware class
+   * @param middlewareClass - Middleware class
+   * @returns Express middleware function
+   */
   private createExpressMiddleware(middlewareClass: any) {
     return async (req: AnxietyRequest, res: AnxietyResponse, next: NextFunction) => {
       try {
@@ -62,6 +83,12 @@ export class RouterEngine {
     };
   }
 
+  /**
+   * Create route handler with parameter injection
+   * @param controllerInstance - Controller instance
+   * @param methodName - Method name to call
+   * @returns Route handler function
+   */
   private createRouteHandler(controllerInstance: any, methodName: string) {
     return async (req: AnxietyRequest, res: AnxietyResponse, next: NextFunction) => {
       try {
@@ -83,6 +110,13 @@ export class RouterEngine {
     };
   }
 
+  /**
+   * Extract method arguments from request based on parameter metadata
+   * @param req - Request object
+   * @param res - Response object
+   * @param paramMetadata - Parameter metadata
+   * @returns Array of arguments for method call
+   */
   private extractMethodArguments(req: AnxietyRequest, res: AnxietyResponse, paramMetadata: ParamMetadata[]): any[] {
     const args: any[] = [];
 
@@ -116,6 +150,10 @@ export class RouterEngine {
     return args;
   }
 
+  /**
+   * Get the Express router instance
+   * @returns Express Router
+   */
   getRouter(): Router {
     return this.router;
   }

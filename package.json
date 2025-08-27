@@ -1,25 +1,62 @@
 {
   "name": "anxiety-js",
   "version": "1.0.0",
-  "description": "Simple Backend Framework Javascript Node.js",
-  "main": "index.js",
+  "description": "A lightweight, decorator-based backend framework for Node.js built with TypeScript",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "scripts": {
-    "dev": "ts-node-dev --respawn src/index.ts",
+    "dev": "ts-node-dev --respawn src/main.ts",
+    "dev:alt": "cross-env PORT=3001 ts-node-dev --respawn src/main.ts",
     "build": "tsc",
-    "start": "node dist/src/index.js",
+    "start": "node dist/src/main.js",
     "test": "jest",
-    "lint": "eslint ./src --ignore-path .eslintignore --ext .ts,.js --fix"
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint ./src --ignore-path .eslintignore --ext .ts,.js --fix",
+    "lint:check": "eslint ./src --ignore-path .eslintignore --ext .ts,.js",
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean"
   },
   "jest": {
     "preset": "ts-jest",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/__tests__/**/*.test.ts",
+      "**/__test__/**/*.test.ts"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest.setup.ts"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.ts",
+      "!src/**/*.test.ts",
+      "!src/**/*.spec.ts"
+    ],
+    "testTimeout": 30000,
+    "forceExit": true,
+    "detectOpenHandles": true,
+    "maxWorkers": 1,
+    "silent": true
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hidesec/anxiety-js.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "nodejs",
+    "typescript",
+    "framework",
+    "backend",
+    "api",
+    "decorators",
+    "express",
+    "mvc",
+    "rest",
+    "microservice",
+    "dependency-injection",
+    "middleware"
+  ],
+  "author": "anxiety-js team",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/hidesec/anxiety-js/issues"
@@ -33,11 +70,13 @@
     "@types/supertest": "^6.0.3",
     "@typescript-eslint/eslint-plugin": "^5.30.6",
     "@typescript-eslint/parser": "^5.30.6",
+    "cross-env": "^10.0.0",
     "eslint": "^8.19.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-decorator-position": "^5.0.0",
     "eslint-plugin-no-loops": "^0.3.0",
     "jest": "^30.0.5",
+    "rimraf": "^6.0.1",
     "supertest": "^7.1.4",
     "ts-jest": "^29.4.1",
     "ts-node-dev": "^2.0.0",
@@ -45,6 +84,7 @@
   },
   "dependencies": {
     "chalk": "^4.1.2",
+    "dotenv": "^17.2.1",
     "express": "^4.18.1",
     "express-validator": "^6.14.2",
     "reflect-metadata": "^0.1.13"
