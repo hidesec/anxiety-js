@@ -27,7 +27,7 @@ export class RolesGuard implements GuardInterface {
       return false;
     }
 
-    const userRoles = user.roles || [];
+    const userRoles = user.role ? [user.role] : [];
     const hasRequiredRole = this.requiredRoles.some(role => userRoles.includes(role));
 
     if (!hasRequiredRole) {

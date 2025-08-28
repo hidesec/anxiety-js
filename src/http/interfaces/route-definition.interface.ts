@@ -1,17 +1,17 @@
 /**
  * Route definition interface for HTTP routes
  */
-export interface RouteDefinition {
+export type RouteDefinition = {
   path: string;
   method: 'get' | 'post' | 'put' | 'delete' | 'patch' | 'options' | 'head';
   methodName: string;
-  middlewares?: Function[];
+  middlewares?: ((req: unknown, res: unknown, next: unknown) => void | Promise<void>)[];
 }
 
 /**
  * Middleware definition interface
  */
-export interface MiddlewareDefinition {
-  target: Function;
-  middlewares: Function[];
+export type MiddlewareDefinition = {
+  target: new (...args: unknown[]) => object;
+  middlewares: ((req: unknown, res: unknown, next: unknown) => void | Promise<void>)[];
 }

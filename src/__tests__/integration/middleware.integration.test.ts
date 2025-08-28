@@ -3,8 +3,6 @@ import request from 'supertest';
 import 'reflect-metadata';
 import { RouterEngine } from '../../core/router/router-engine';
 import { TestController } from '../../modules/test/controllers/test.controller';
-import { AuthMiddleware } from '../../middleware/built-in/auth.middleware';
-import { LoggingMiddleware } from '../../middleware/built-in/logging.middleware';
 
 describe('Middleware Integration Tests', () => {
   let app: express.Express;

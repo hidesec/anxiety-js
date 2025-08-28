@@ -5,8 +5,9 @@ import { METADATA_KEYS } from '../../shared/constants';
 /**
  * Injectable decorator options
  */
-export interface InjectableOptions {
+export type InjectableOptions = {
   scope?: ProviderScope;
+  [key: string]: unknown;
 }
 
 /**
@@ -14,7 +15,7 @@ export interface InjectableOptions {
  * @param options - Injectable configuration options
  */
 export function Injectable(options: InjectableOptions = {}): ClassDecorator {
-  return (target: Function) => {
+  return (target: any) => {
     Reflect.defineMetadata(METADATA_KEYS.INJECTABLE, true, target);
     Reflect.defineMetadata('injectable_options', options, target);
     

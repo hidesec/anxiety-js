@@ -1,11 +1,26 @@
 import { JwtAuthGuard, Roles, RolesGuard } from '../../common/guards';
 import { AnxietyRequest, AnxietyResponse } from '../../middleware/interfaces/middleware.interface';
+import { User } from '../../entities/user.entity';
 
 describe('Guards', () => {
   let mockReq: Partial<AnxietyRequest>;
   let mockRes: Partial<AnxietyResponse>;
   let statusSpy: jest.SpyInstance;
   let jsonSpy: jest.SpyInstance;
+
+  // Helper function to create test User objects
+  const createTestUser = (overrides: Partial<User> = {}): User => ({
+    id: 1,
+    name: 'Test User',
+    email: 'test@example.com',
+    password: 'hashed-password',
+    isActive: true,
+    role: 'user',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    toResponse: function() { return this; },
+    ...overrides
+  });
 
   beforeEach(() => {
     jsonSpy = jest.fn();
@@ -95,7 +110,7 @@ describe('Guards', () => {
     });
 
     it('should reject users without required roles', () => {
-      mockReq.user = { id: 1, roles: ['user'] };
+      mockReq.user = createTestUser({ role: 'user' });
       
       const result = guard.canActivate(mockReq as AnxietyRequest, mockRes as AnxietyResponse);
       
@@ -109,18 +124,18 @@ describe('Guards', () => {
     });
 
     it('should accept users with required roles', () => {
-      mockReq.user = { id: 1, roles: ['admin', 'user'] };
+      mockReq.user = createTestUser({ role: 'admin' });
       
       const result = guard.canActivate(mockReq as AnxietyRequest, mockRes as AnxietyResponse);
       
       expect(result).toBe(true);
       expect(mockReq.context?.authorized).toBe(true);
       expect(mockReq.context?.authorizedRoles).toEqual(['admin', 'moderator']);
-      expect(mockReq.context?.userRoles).toEqual(['admin', 'user']);
+      expect(mockReq.context?.userRoles).toEqual(['admin']);
     });
 
     it('should handle users without roles array', () => {
-      mockReq.user = { id: 1 };
+      mockReq.user = createTestUser({ role: undefined as any });
       
       const result = guard.canActivate(mockReq as AnxietyRequest, mockRes as AnxietyResponse);
       

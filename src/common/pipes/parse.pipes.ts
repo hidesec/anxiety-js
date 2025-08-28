@@ -18,7 +18,8 @@ export class ParseIntPipe implements PipeInterface<string, number> {
   /**
    * Transform string to integer
    */
-  transform(value: string, metadata?: PipeMetadata): number {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  transform(value: string, _metadata?: PipeMetadata): number {
     if (value === null || value === undefined || value === '') {
       throw new PipeValidationException('Value is required for integer parsing');
     }
@@ -59,7 +60,8 @@ export class ParseFloatPipe implements PipeInterface<string, number> {
   /**
    * Transform string to float
    */
-  transform(value: string, metadata?: PipeMetadata): number {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  transform(value: string, _metadata?: PipeMetadata): number {
     if (value === null || value === undefined || value === '') {
       throw new PipeValidationException('Value is required for float parsing');
     }
@@ -95,7 +97,8 @@ export class ParseBoolPipe implements PipeInterface<any, boolean> {
   /**
    * Transform value to boolean
    */
-  transform(value: any, metadata?: PipeMetadata): boolean {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  transform(value: any, _metadata?: PipeMetadata): boolean {
     if (value === null || value === undefined) {
       throw new PipeValidationException('Value is required for boolean parsing');
     }

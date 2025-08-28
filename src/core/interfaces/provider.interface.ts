@@ -7,7 +7,7 @@ import { Constructor } from '../../shared/types';
 /**
  * Provider interface
  */
-export interface Provider<T = any> {
+export type Provider<T = any> = {
   provide: string | Constructor<T>;
   useClass?: Constructor<T>;
   useValue?: T;
@@ -19,7 +19,7 @@ export interface Provider<T = any> {
 /**
  * Class provider interface
  */
-export interface ClassProvider<T = any> {
+export type ClassProvider<T = any> = {
   provide: string | Constructor<T>;
   useClass: Constructor<T>;
 }
@@ -27,7 +27,7 @@ export interface ClassProvider<T = any> {
 /**
  * Value provider interface
  */
-export interface ValueProvider<T = any> {
+export type ValueProvider<T = any> = {
   provide: string | Constructor<T>;
   useValue: T;
 }
@@ -35,7 +35,7 @@ export interface ValueProvider<T = any> {
 /**
  * Factory provider interface
  */
-export interface FactoryProvider<T = any> {
+export type FactoryProvider<T = any> = {
   provide: string | Constructor<T>;
   useFactory: (...args: any[]) => T | Promise<T>;
   inject?: (string | Constructor)[];
@@ -53,7 +53,7 @@ export enum ProviderScope {
 /**
  * Injectable metadata interface
  */
-export interface InjectableMetadata {
+export type InjectableMetadata = {
   scope?: ProviderScope;
   dependencies?: (string | Constructor)[];
 }
@@ -61,7 +61,7 @@ export interface InjectableMetadata {
 /**
  * Injection token interface
  */
-export interface InjectionToken<T = any> {
+export type InjectionToken<T = any> = {
   readonly description: string;
   toString(): string;
 }
@@ -69,6 +69,6 @@ export interface InjectionToken<T = any> {
 /**
  * Forward reference interface
  */
-export interface ForwardReference<T = any> {
+export type ForwardReference<T = any> = {
   forwardRef: () => Constructor<T>;
 }

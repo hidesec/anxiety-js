@@ -1,4 +1,5 @@
 import { MiddlewareInterface, AnxietyRequest, AnxietyResponse, NextHandler } from '../interfaces/middleware.interface';
+import { User } from '../../entities/user.entity';
 
 /**
  * Authentication middleware for validating authorization tokens
@@ -29,11 +30,18 @@ export class AuthMiddleware implements MiddlewareInterface {
     }
 
     // Set user data in request
-    req.user = { 
-      id: 1, 
-      name: 'John Doe', 
-      email: 'john@example.com' 
+    const user: User = {
+      id: 1,
+      name: 'John Doe',
+      email: 'john@example.com',
+      password: 'hashed-password',
+      isActive: true,
+      role: 'user',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      toResponse: function() { return this; }
     };
+    req.user = user;
     
     req.context = { 
       ...req.context, 

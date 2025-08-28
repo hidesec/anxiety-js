@@ -1,4 +1,4 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { Router, NextFunction, Request, Response } from 'express';
 import 'reflect-metadata';
 import { RouteDefinition } from '../../http/interfaces/route-definition.interface';
 import { AnxietyRequest, AnxietyResponse } from '../../middleware/interfaces/middleware.interface';
@@ -17,10 +17,10 @@ export class RouterEngine {
    * @param controllerClass - Controller class to register
    * @param basePath - Optional base path for all routes
    */
-  registerController(controllerClass: any, basePath: string = ''): void {
+  registerController(controllerClass: any, basePath = ''): void {
     const controllerInstance = new controllerClass();
     const routes: RouteDefinition[] = Reflect.getMetadata(ROUTES_METADATA, controllerClass) || [];
-    const classMiddlewares: Function[] = Reflect.getMetadata(MIDDLEWARE_METADATA, controllerClass) || [];
+    const classMiddlewares: (new (...args: unknown[]) => object)[] = Reflect.getMetadata(MIDDLEWARE_METADATA, controllerClass) || [];
     const controllerPrefix: string = Reflect.getMetadata('controller_prefix', controllerClass) || '';
 
     // Sort routes: static routes first, then dynamic routes
@@ -33,7 +33,7 @@ export class RouterEngine {
 
     routes.forEach(route => {
       const fullPath = this.combinePaths(basePath, controllerPrefix, route.path);
-      const methodMiddlewares: Function[] = Reflect.getMetadata(MIDDLEWARE_METADATA, controllerClass.prototype, route.methodName) || [];
+      const methodMiddlewares: (new (...args: unknown[]) => object)[] = Reflect.getMetadata(MIDDLEWARE_METADATA, controllerClass.prototype, route.methodName) || [];
       const allMiddlewares = [...classMiddlewares, ...methodMiddlewares];
 
       // Convert middleware functions to Express middleware
@@ -45,7 +45,8 @@ export class RouterEngine {
       if (process.env.NODE_ENV !== 'test') {
         console.log(`🛣️  Registering route: ${route.method.toUpperCase()} ${fullPath}`);
       }
-      this.router[route.method](fullPath, ...expressMiddlewares, handler);
+      // Cast handlers to Express-compatible types
+      this.router[route.method](fullPath, ...expressMiddlewares as any[], handler as any);
     });
   }
 
@@ -69,11 +70,11 @@ export class RouterEngine {
    * @returns Express middleware function
    */
   private createExpressMiddleware(middlewareClass: any) {
-    return async (req: AnxietyRequest, res: AnxietyResponse, next: NextFunction) => {
+    return async (req: Request, res: Response, next: NextFunction) => {
       try {
         const middlewareInstance = new middlewareClass();
         if (middlewareInstance.use) {
-          await middlewareInstance.use(req, res, next);
+          await middlewareInstance.use(req as AnxietyRequest, res as AnxietyResponse, next);
         } else {
           next();
         }
@@ -90,7 +91,7 @@ export class RouterEngine {
    * @returns Route handler function
    */
   private createRouteHandler(controllerInstance: any, methodName: string) {
-    return async (req: AnxietyRequest, res: AnxietyResponse, next: NextFunction) => {
+    return async (req: Request, res: Response, next: NextFunction) => {
       try {
         const paramMetadata: ParamMetadata[] = Reflect.getMetadata(
           ROUTE_PARAM_METADATA,
@@ -98,7 +99,7 @@ export class RouterEngine {
           methodName
         ) || [];
 
-        const args = this.extractMethodArguments(req, res, paramMetadata);
+        const args = this.extractMethodArguments(req as AnxietyRequest, res as AnxietyResponse, paramMetadata);
         const result = await controllerInstance[methodName](...args);
 
         if (!res.headersSent && result !== undefined) {

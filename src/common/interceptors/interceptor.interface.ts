@@ -3,7 +3,7 @@ import { AnxietyRequest, AnxietyResponse } from '../../middleware/interfaces/mid
 /**
  * Interface for interceptors that can modify requests and responses
  */
-export interface InterceptorInterface {
+export type InterceptorInterface = {
   /**
    * Intercept method called before and after route handler execution
    * @param req - The request object
@@ -22,13 +22,13 @@ export interface InterceptorInterface {
 /**
  * Execution context for interceptors
  */
-export interface ExecutionContext {
+export type ExecutionContext = {
   switchToHttp(): {
     getRequest(): AnxietyRequest;
     getResponse(): AnxietyResponse;
   };
   getClass(): any;
-  getHandler(): Function;
+  getHandler(): (...args: unknown[]) => unknown;
   getArgs(): any[];
   getArgByIndex(index: number): any;
   switchToRpc?(): any;
@@ -38,6 +38,6 @@ export interface ExecutionContext {
 /**
  * Call handler interface
  */
-export interface CallHandler {
+export type CallHandler = {
   handle(): Promise<any>;
 }
