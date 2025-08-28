@@ -1,26 +1,22 @@
-import 'reflect-metadata';
-import express, {Request, Response} from 'express';
-import {controllers} from './controllers';
-import {RouteDefinitionInterface} from './package/interface/decorator/http-interface/RouteDefinition.interface';
+// Core framework exports
+export * from './core';
 
-const app = express();
+// HTTP functionality
+export * from './http';
 
-app.get('/', (req: Request, res: Response)=> {
-  res.send('hello there!');
-});
+// Middleware functionality
+export * from './middleware';
 
-controllers.forEach((controller) => {
-  const instance = new controller() as any;
-  const prefix = Reflect.getMetadata('prefix', controller);
-  const routes: Array<RouteDefinitionInterface> = Reflect.getMetadata('routes', controller);
+// Common utilities and decorators
+export * from './common';
 
-  routes.forEach((route) => {
-    app[route.requestMethod]('/' + prefix + route.path, (req: express.Request, res: express.Response) => {
-      instance[route.methodName](req, res);
-    });
-  });
-});
+// Shared types, constants, and enums
+export * from './shared/constants';
+export * from './shared/enums';
+export * from './shared/types';
 
-app.listen(3000, () => {
-  console.log('app running on port 3000!');
-});
+// Application modules
+export * from './modules/app.module';
+
+// For backward compatibility, also export the createApp function
+export { createApp } from './app';
