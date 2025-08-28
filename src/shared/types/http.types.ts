@@ -7,7 +7,7 @@ import { HttpStatus, HttpMethod } from '../enums';
 /**
  * HTTP request configuration
  */
-export interface HttpRequestConfig {
+export type HttpRequestConfig = {
   method: HttpMethod;
   url: string;
   headers?: Record<string, string>;
@@ -20,7 +20,7 @@ export interface HttpRequestConfig {
 /**
  * HTTP response configuration
  */
-export interface HttpResponseConfig {
+export type HttpResponseConfig = {
   status: HttpStatus;
   headers?: Record<string, string>;
   body?: any;
@@ -30,7 +30,7 @@ export interface HttpResponseConfig {
 /**
  * Error response structure
  */
-export interface ErrorResponse {
+export type ErrorResponse = {
   error: string;
   message: string;
   statusCode: number;
@@ -42,7 +42,7 @@ export interface ErrorResponse {
 /**
  * Success response structure
  */
-export interface SuccessResponse<T = any> {
+export type SuccessResponse<T = any> = {
   data: T;
   message?: string;
   statusCode: number;
@@ -58,7 +58,7 @@ export interface SuccessResponse<T = any> {
 /**
  * Paginated response structure
  */
-export interface PaginatedResponse<T = any> {
+export type PaginatedResponse<T = any> = {
   data: T[];
   pagination: {
     page: number;
@@ -75,7 +75,7 @@ export interface PaginatedResponse<T = any> {
 /**
  * File upload configuration
  */
-export interface FileUploadConfig {
+export type FileUploadConfig = {
   destination: string;
   filename?: string;
   limits?: {
@@ -89,7 +89,7 @@ export interface FileUploadConfig {
 /**
  * CORS configuration
  */
-export interface CorsConfig {
+export type CorsConfig = {
   origin?: string | string[] | boolean;
   methods?: HttpMethod[];
   allowedHeaders?: string[];
@@ -100,7 +100,7 @@ export interface CorsConfig {
 /**
  * Rate limiting configuration
  */
-export interface RateLimitConfig {
+export type RateLimitConfig = {
   windowMs: number;
   max: number;
   message?: string;

@@ -15,7 +15,20 @@ export const METADATA_KEYS = {
   GUARD: 'is_guard',
   INTERCEPTOR: 'is_interceptor',
   PIPE: 'is_pipe',
-  FILTER: 'is_filter'
+  FILTER: 'is_filter',
+  // Database metadata keys
+  ENTITY: 'is_entity',
+  ENTITY_OPTIONS: 'entity_options',
+  REPOSITORY: 'is_repository',
+  REPOSITORY_METADATA: 'repository_metadata',
+  TRANSACTIONAL: 'is_transactional',
+  DATABASE_LISTENER: 'database_listener',
+  // Configuration metadata keys
+  CONFIGURABLE: 'is_configurable',
+  CONFIG_INJECT: 'config_inject',
+  // Dependency injection metadata keys
+  DESIGN_PARAMTYPES: 'design:paramtypes',
+  INJECT_TOKENS: 'inject_tokens'
 } as const;
 
 /**

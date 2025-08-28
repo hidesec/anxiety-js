@@ -1,7 +1,7 @@
 /**
  * Interface for data transformation and validation pipes
  */
-export interface PipeInterface<T = any, R = any> {
+export type PipeInterface<T = any, R = any> = {
   /**
    * Transform input data
    * @param value - The input value to transform
@@ -14,7 +14,7 @@ export interface PipeInterface<T = any, R = any> {
 /**
  * Metadata interface for pipe transformations
  */
-export interface PipeMetadata {
+export type PipeMetadata = {
   type?: 'body' | 'query' | 'param' | 'custom';
   data?: string;
   metatype?: any;

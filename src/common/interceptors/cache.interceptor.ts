@@ -4,7 +4,7 @@ import { AnxietyRequest, AnxietyResponse } from '../../middleware/interfaces/mid
 /**
  * Cache configuration options
  */
-export interface CacheOptions {
+export type CacheOptions = {
   /** Cache TTL in milliseconds */
   ttl?: number;
   /** Maximum cache size */
@@ -20,7 +20,7 @@ export interface CacheOptions {
 /**
  * Cache entry structure
  */
-interface CacheEntry {
+type CacheEntry = {
   data: any;
   timestamp: number;
   ttl: number;
@@ -51,7 +51,7 @@ export class CacheInterceptor implements InterceptorInterface {
   async intercept(
     req: AnxietyRequest,
     res: AnxietyResponse,
-    next: () => void,
+    _next: () => void,
     handler: () => any
   ): Promise<any> {
     const method = req.method.toUpperCase();
@@ -77,30 +77,25 @@ export class CacheInterceptor implements InterceptorInterface {
       return cachedEntry.data;
     }
 
-    try {
-      // Execute handler
-      const result = await handler();
-      
-      // Don't cache if response was already sent or if it's an excluded status code
-      if (res.headersSent || this.shouldExcludeFromCache(res.statusCode)) {
-        return result;
-      }
-
-      // Cache the result
-      this.setCachedEntry(cacheKey, result);
-      
-      // Add cache headers
-      res.set({
-        'X-Cache': 'MISS',
-        'X-Cache-Key': cacheKey,
-        'Cache-Control': `max-age=${Math.floor(this.options.ttl / 1000)}`
-      });
-
+    // Execute handler
+    const result = await handler();
+    
+    // Don't cache if response was already sent or if it's an excluded status code
+    if (res.headersSent || this.shouldExcludeFromCache(res.statusCode)) {
       return result;
-    } catch (error) {
-      // Don't cache errors
-      throw error;
     }
+
+    // Cache the result
+    this.setCachedEntry(cacheKey, result);
+    
+    // Add cache headers
+    res.set({
+      'X-Cache': 'MISS',
+      'X-Cache-Key': cacheKey,
+      'Cache-Control': `max-age=${Math.floor(this.options.ttl / 1000)}`
+    });
+
+    return result;
   }
 
   /**

@@ -3,7 +3,7 @@ import { AnxietyRequest, AnxietyResponse } from '../../middleware/interfaces/mid
 /**
  * Interface for exception filters that handle errors
  */
-export interface ExceptionFilterInterface {
+export type ExceptionFilterInterface = {
   /**
    * Catch and handle exceptions
    * @param exception - The exception that was thrown
@@ -16,7 +16,7 @@ export interface ExceptionFilterInterface {
 /**
  * Arguments host interface for accessing execution context
  */
-export interface ArgumentsHost {
+export type ArgumentsHost = {
   getArgs(): any[];
   getArgByIndex(index: number): any;
   switchToRpc(): RpcArgumentsHost;
@@ -28,16 +28,16 @@ export interface ArgumentsHost {
 /**
  * HTTP-specific arguments host
  */
-export interface HttpArgumentsHost {
+export type HttpArgumentsHost = {
   getRequest(): AnxietyRequest;
   getResponse(): AnxietyResponse;
-  getNext(): Function;
+  getNext(): () => void;
 }
 
 /**
  * RPC arguments host (for future use)
  */
-export interface RpcArgumentsHost {
+export type RpcArgumentsHost = {
   getData(): any;
   getContext(): any;
 }
@@ -45,7 +45,7 @@ export interface RpcArgumentsHost {
 /**
  * WebSocket arguments host (for future use)
  */
-export interface WsArgumentsHost {
+export type WsArgumentsHost = {
   getData(): any;
   getClient(): any;
 }

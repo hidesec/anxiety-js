@@ -1,5 +1,6 @@
 import { GuardInterface } from './guard.interface';
 import { AnxietyRequest, AnxietyResponse } from '../../middleware/interfaces/middleware.interface';
+import { User } from '../../entities/user.entity';
 
 /**
  * JWT Authentication Guard
@@ -67,13 +68,19 @@ export class JwtAuthGuard implements GuardInterface {
    * Decode JWT token (simplified implementation)
    * In production, use proper JWT decoding
    */
-  private decodeToken(token: string): any {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private decodeToken(_token: string): User {
     // Simplified user data - in production decode actual JWT
     return {
       id: 1,
+      name: 'Test User',
       email: 'user@anxiety-js.com',
-      roles: ['user'],
-      iat: Date.now()
+      password: 'hashed-password',
+      isActive: true,
+      role: 'user',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      toResponse: function() { return this; }
     };
   }
 }

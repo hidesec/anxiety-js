@@ -4,9 +4,6 @@ import {
   isNil,
   isString,
   isNumber,
-  isBoolean,
-  isFunction,
-  isArray,
   deepMerge,
   randomString,
   capitalize,
@@ -23,13 +20,23 @@ describe('Utility Functions', () => {
         expect(isConstructor(TestClass)).toBe(true);
       });
 
-      it('should return true for function constructors', () => {
-        function TestFunction() {}
+      /**
+       * Test function for constructor checking
+       */
+      // eslint-disable-next-line require-jsdoc
+      function TestFunction() {
+        // Empty function for testing purposes
+      }
+
+      it('should return true for constructor functions', () => {
         expect(isConstructor(TestFunction)).toBe(true);
       });
 
       it('should return false for arrow functions', () => {
-        const arrowFn = () => {};
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        const arrowFn = () => {
+          // Empty arrow function for testing purposes
+        };
         expect(isConstructor(arrowFn)).toBe(false);
       });
 

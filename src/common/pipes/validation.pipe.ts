@@ -3,7 +3,7 @@ import { PipeInterface, PipeMetadata, PipeValidationException } from './pipe.int
 /**
  * Validation options for the validation pipe
  */
-export interface ValidationOptions {
+export type ValidationOptions = {
   /** Skip missing properties */
   skipMissingProperties?: boolean;
   /** Whitelist only known properties */
@@ -17,7 +17,7 @@ export interface ValidationOptions {
 /**
  * Validation rules for properties
  */
-export interface ValidationRule {
+export type ValidationRule = {
   required?: boolean;
   type?: 'string' | 'number' | 'boolean' | 'object' | 'array';
   minLength?: number;
@@ -31,7 +31,7 @@ export interface ValidationRule {
 /**
  * Validation schema definition
  */
-export interface ValidationSchema {
+export type ValidationSchema = {
   [key: string]: ValidationRule;
 }
 
@@ -57,7 +57,8 @@ export class ValidationPipe implements PipeInterface {
   /**
    * Transform and validate input value
    */
-  transform(value: any, metadata?: PipeMetadata): any {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  transform(value: any, _metadata?: PipeMetadata): any {
     if (value === null || value === undefined) {
       throw new PipeValidationException('Value cannot be null or undefined');
     }

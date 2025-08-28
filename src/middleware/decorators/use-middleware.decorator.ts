@@ -6,8 +6,8 @@ export const MIDDLEWARE_METADATA = 'anxiety_middleware';
  * UseMiddleware decorator for applying middleware to controllers or methods
  * @param middlewares - Middleware classes to apply
  */
-export function UseMiddleware(...middlewares: Function[]): ClassDecorator & MethodDecorator {
-  return (target: any, propertyKey?: string | symbol) => {
+export function UseMiddleware(...middlewares: (new (...args: unknown[]) => object)[]): ClassDecorator & MethodDecorator {
+  return (target: object, propertyKey?: string | symbol) => {
     if (propertyKey) {
       // Method-level middleware
       const existingMiddlewares = Reflect.getMetadata(MIDDLEWARE_METADATA, target, propertyKey) || [];

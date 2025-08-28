@@ -28,3 +28,21 @@ export * from './interceptors';
 
 // Pipes (Data Transformation & Validation)
 export * from './pipes';
+
+// Re-export database decorators
+export {
+  InjectRepository,
+  Entity,
+  Transaction,
+  Transactional,
+  Cache,
+  Validate
+} from '../database/decorators/database.decorator';
+
+// Re-export config decorators
+export {
+  InjectConfig,
+  Config,
+  ConfigValue,
+  Environment
+} from '../config/decorators/config.decorator';

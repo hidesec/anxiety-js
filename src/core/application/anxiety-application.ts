@@ -1,15 +1,19 @@
 import 'reflect-metadata';
 import express, { Express, Request, Response, NextFunction } from 'express';
 import { RouterEngine } from '../router/router-engine';
+import { ConfigService, ConfigModule, ConfigModuleOptions } from '../../config';
+import { DatabaseService, DatabaseModule, DatabaseModuleOptions } from '../../database';
 
 /**
  * Application configuration interface
  */
-export interface ApplicationConfig {
+export type ApplicationConfig = {
   cors?: boolean;
   bodyParser?: boolean;
   globalPrefix?: string;
   port?: number;
+  config?: ConfigModuleOptions;
+  database?: DatabaseModuleOptions;
 }
 
 /**
@@ -19,6 +23,8 @@ export class AnxietyApplication {
   private app: Express;
   private routerEngine: RouterEngine;
   private config: ApplicationConfig;
+  private configService: ConfigService;
+  private databaseService: DatabaseService | null = null;
 
   constructor(config: ApplicationConfig = {}) {
     this.app = express();
@@ -30,6 +36,9 @@ export class AnxietyApplication {
       ...config
     };
 
+    // Initialize ConfigService
+    this.configService = ConfigModule.initialize(this.config.config);
+    
     this.setupMiddleware();
   }
 
@@ -46,9 +55,34 @@ export class AnxietyApplication {
     this.app.get('/', (req: Request, res: Response) => {
       res.json({
         message: 'Hello there! Welcome to Anxiety Framework',
-        version: '1.0.0',
+        version: this.configService.get('app.version', '1.0.0'),
+        environment: this.configService.get('app.environment', 'development'),
         timestamp: new Date().toISOString()
       });
+    });
+
+    // Health check endpoint
+    this.app.get('/health', async (req: Request, res: Response) => {
+      try {
+        const dbHealth = this.databaseService
+          ? await this.databaseService.getHealthStatus()
+          : { connected: false, message: 'Database not initialized' };
+
+        res.json({
+          status: 'ok',
+          timestamp: new Date().toISOString(),
+          uptime: process.uptime(),
+          environment: this.configService.get('app.environment'),
+          version: this.configService.get('app.version'),
+          database: dbHealth
+        });
+      } catch (error: any) {
+        res.status(503).json({
+          status: 'error',
+          timestamp: new Date().toISOString(),
+          error: error?.message || 'Unknown error'
+        });
+      }
     });
   }
 
@@ -109,9 +143,29 @@ export class AnxietyApplication {
   }
 
   /**
+   * Initialize database connection
+   */
+  private async initDatabase(): Promise<void> {
+    try {
+      this.databaseService = await DatabaseModule.initialize(this.configService, this.config.database);
+      if (process.env.NODE_ENV !== 'test') {
+        console.log('🗄️  Database service initialized');
+      }
+    } catch (error: any) {
+      console.error('❌ Failed to initialize database:', error?.message);
+      throw error;
+    }
+  }
+
+  /**
    * Initialize the application (setup routes and error handling)
    */
-  init(): void {
+  async init(): Promise<void> {
+    // Initialize database if configured
+    if (this.config.database !== undefined && this.config.database !== null) {
+      await this.initDatabase();
+    }
+
     this.app.use(this.routerEngine.getRouter());
     this.setupErrorHandling();
   }
@@ -121,12 +175,22 @@ export class AnxietyApplication {
    * @param port - Optional port number
    * @param callback - Optional callback function
    */
-  listen(port?: number, callback?: () => void): void {
-    const serverPort = port || this.config.port || 3000;
+  async listen(port?: number, callback?: () => void): Promise<void> {
+    const serverPort = port || this.configService.get('app.port', this.config.port || 3000);
+    
+    // Initialize the application
+    await this.init();
     
     this.app.listen(serverPort, () => {
-      console.log(`🚀 Anxiety Framework is running on port ${serverPort}!`);
-      console.log(`📱 Server URL: http://localhost:${serverPort}`);
+      if (process.env.NODE_ENV !== 'test') {
+        console.log(`🚀 Anxiety Framework is running on port ${serverPort}!`);
+        console.log(`📱 Server URL: http://localhost:${serverPort}`);
+        console.log(`🌍 Environment: ${this.configService.get('app.environment')}`);
+        
+        if (this.databaseService?.isConnected()) {
+          console.log(`🗄️  Database: Connected to ${this.configService.get('database.database')}`);
+        }
+      }
       
       if (callback) {
         callback();
@@ -140,6 +204,22 @@ export class AnxietyApplication {
    */
   getHttpAdapter(): Express {
     return this.app;
+  }
+
+  /**
+   * Shutdown the application gracefully
+   */
+  async shutdown(): Promise<void> {
+    if (this.databaseService) {
+      await this.databaseService.disconnect();
+      if (process.env.NODE_ENV !== 'test') {
+        console.log('🔌 Database disconnected');
+      }
+    }
+    
+    if (process.env.NODE_ENV !== 'test') {
+      console.log('👋 Anxiety Framework shut down gracefully');
+    }
   }
 }
 

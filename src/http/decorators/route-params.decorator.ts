@@ -2,7 +2,7 @@ import 'reflect-metadata';
 
 export const ROUTE_PARAM_METADATA = 'route_param_metadata';
 
-export interface ParamMetadata {
+export type ParamMetadata = {
   index: number;
   type: 'param' | 'query' | 'body' | 'headers' | 'request' | 'response';
   key?: string;

@@ -4,7 +4,7 @@ import { AnxietyRequest, AnxietyResponse } from '../../middleware/interfaces/mid
 /**
  * Response transformation options
  */
-export interface ResponseTransformOptions {
+export type ResponseTransformOptions = {
   /** Wrap response in a standard format */
   standardFormat?: boolean;
   /** Add metadata to response */
@@ -18,7 +18,7 @@ export interface ResponseTransformOptions {
 /**
  * Standard response format
  */
-export interface StandardResponse<T = any> {
+export type StandardResponse<T = any> = {
   success: boolean;
   data: T;
   message?: string;
@@ -50,7 +50,7 @@ export class ResponseTransformInterceptor implements InterceptorInterface {
   async intercept(
     req: AnxietyRequest, 
     res: AnxietyResponse, 
-    next: () => void, 
+    _next: () => void, 
     handler: () => any
   ): Promise<any> {
     const startTime = Date.now();
@@ -104,7 +104,7 @@ export class ResponseTransformInterceptor implements InterceptorInterface {
       // Add metadata if enabled
       if (this.options.addMetadata) {
         standardResponse.metadata = {
-          requestId: req.context?.requestId,
+          requestId: req.context?.requestId as string | undefined,
           processingTime: Date.now() - startTime,
           version: '1.0.0'
         };
@@ -133,7 +133,7 @@ export class ResponseTransformInterceptor implements InterceptorInterface {
     // Add metadata for errors too
     if (this.options.addMetadata) {
       errorResponse.metadata = {
-        requestId: req.context?.requestId,
+        requestId: req.context?.requestId as string | undefined,
         processingTime: Date.now() - startTime,
         version: '1.0.0'
       };

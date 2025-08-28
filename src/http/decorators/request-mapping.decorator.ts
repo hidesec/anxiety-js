@@ -8,7 +8,7 @@ export const ROUTES_METADATA = 'routes';
  * @param method - HTTP method type
  */
 function createMappingDecorator(method: RouteDefinition['method']) {
-  return (path: string = ''): MethodDecorator => {
+  return (path = ''): MethodDecorator => {
     return (target: any, propertyKey: string | symbol) => {
       const existingRoutes: RouteDefinition[] = Reflect.getMetadata(ROUTES_METADATA, target.constructor) || [];
       

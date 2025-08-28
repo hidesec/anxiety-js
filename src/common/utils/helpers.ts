@@ -5,7 +5,7 @@
 /**
  * Check if value is a class constructor
  */
-export function isConstructor(value: any): value is Function {
+export function isConstructor(value: unknown): value is new (...args: unknown[]) => object {
   return typeof value === 'function' && !!value.prototype && value.prototype.constructor === value;
 }
 
@@ -47,7 +47,7 @@ export function isBoolean(value: any): value is boolean {
 /**
  * Check if value is a function
  */
-export function isFunction(value: any): value is Function {
+export function isFunction(value: unknown): value is (...args: unknown[]) => unknown {
   return typeof value === 'function';
 }
 
@@ -65,7 +65,7 @@ export function deepMerge<T extends Record<string, any>>(target: T, source: any)
   const result = { ...target };
   
   for (const key in source) {
-    if (source.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(source, key)) {
       const sourceValue = source[key];
       const targetValue = result[key];
       
@@ -83,7 +83,7 @@ export function deepMerge<T extends Record<string, any>>(target: T, source: any)
 /**
  * Generate random string
  */
-export function randomString(length: number = 8): string {
+export function randomString(length = 8): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
   for (let i = 0; i < length; i++) {

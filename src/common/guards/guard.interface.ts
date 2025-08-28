@@ -3,7 +3,7 @@ import { AnxietyRequest, AnxietyResponse } from '../../middleware/interfaces/mid
 /**
  * Interface for route guards that control access to endpoints
  */
-export interface GuardInterface {
+export type GuardInterface = {
   /**
    * Determines if the request should be allowed to proceed
    * @param req - The request object

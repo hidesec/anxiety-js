@@ -129,7 +129,7 @@ export class ValidationExceptionFilter implements ExceptionFilterInterface {
     const path = req.originalUrl;
     const method = req.method;
     
-    let status = 400;
+    const status = 400;
     let message = 'Validation failed';
     let details: any;
 

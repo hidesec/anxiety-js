@@ -7,7 +7,7 @@ import { Constructor } from '../../shared/types';
 /**
  * Application module interface
  */
-export interface ApplicationModule {
+export type ApplicationModule = {
   imports?: Constructor[];
   controllers?: Constructor[];
   services?: Constructor[];
@@ -18,7 +18,7 @@ export interface ApplicationModule {
 /**
  * Module metadata interface
  */
-export interface ModuleMetadata {
+export type ModuleMetadata = {
   imports?: Constructor[];
   controllers?: Constructor[];
   providers?: Constructor[];
@@ -28,7 +28,7 @@ export interface ModuleMetadata {
 /**
  * Dependency injection container interface
  */
-export interface DIContainer {
+export type DIContainer = {
   register<T>(token: string | Constructor<T>, implementation: Constructor<T>): void;
   resolve<T>(token: string | Constructor<T>): T;
   has(token: string | Constructor): boolean;
@@ -38,7 +38,7 @@ export interface DIContainer {
 /**
  * Application context interface
  */
-export interface ApplicationContext {
+export type ApplicationContext = {
   get<T>(token: string | Constructor<T>): T;
   resolve<T>(token: string | Constructor<T>): Promise<T>;
   registerModule(module: ApplicationModule): void;
@@ -48,18 +48,18 @@ export interface ApplicationContext {
 /**
  * Lifecycle hook interfaces
  */
-export interface OnModuleInit {
+export type OnModuleInit = {
   onModuleInit(): void | Promise<void>;
 }
 
-export interface OnModuleDestroy {
+export type OnModuleDestroy = {
   onModuleDestroy(): void | Promise<void>;
 }
 
-export interface OnApplicationBootstrap {
+export type OnApplicationBootstrap = {
   onApplicationBootstrap(): void | Promise<void>;
 }
 
-export interface OnApplicationShutdown {
+export type OnApplicationShutdown = {
   onApplicationShutdown(signal?: string): void | Promise<void>;
 }
