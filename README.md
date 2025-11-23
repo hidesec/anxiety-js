@@ -53,11 +53,13 @@ export class UserController {
 ## Available Scripts
 
 ```bash
-npm run dev        # Start development server
-npm run build      # Build for production
-npm start          # Start production server
-npm test           # Run tests
-npm run lint       # Run ESLint
+npm run dev              # Start development server
+npm run build            # Build for production
+npm start                # Start production server
+npm test                 # Run tests
+npm run lint             # Run ESLint
+npm run generate:secrets # Generate secure random secrets
+npm run generate:jwt     # Generate JWT secret only
 ```
 
 ## Environment Configuration
@@ -80,6 +82,46 @@ API_RATE_LIMIT_ENABLED=true
 
 # And many more...
 ```
+
+### 🔒 Security Configuration
+
+**IMPORTANT:** The framework includes built-in security validation to protect against weak secrets and default credentials.
+
+#### Generating Secure Secrets
+
+Before running in production, generate secure secrets:
+
+```bash
+# Generate all types of secrets
+npm run generate:secrets
+
+# Generate only JWT secret
+npm run generate:jwt
+
+# Or use openssl
+openssl rand -base64 64
+```
+
+#### Security Validation
+
+The application automatically validates:
+- ✅ JWT secret strength (minimum 32 characters)
+- ✅ Database credentials (no default values)
+- ✅ Prevention of weak/common passwords
+- ✅ Environment-specific security checks
+
+**In production mode**, the application will **refuse to start** if:
+- JWT_SECRET is not set or uses a default value
+- Database credentials use default/weak values
+- Secrets are too short or use simple patterns
+
+#### Security Best Practices
+
+1. **Never use default secrets in production**
+2. **Generate unique secrets for each environment**
+3. **Store production secrets in a secure vault**
+4. **Rotate secrets regularly (every 90 days)**
+5. **Never commit `.env` files to version control**
 
 ## Project Structure
 

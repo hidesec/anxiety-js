@@ -15,7 +15,9 @@
     "lint": "eslint ./src --ignore-path .eslintignore --ext .ts,.js --fix",
     "lint:check": "eslint ./src --ignore-path .eslintignore --ext .ts,.js",
     "clean": "rimraf dist",
-    "prebuild": "npm run clean"
+    "prebuild": "npm run clean",
+    "generate:secrets": "node scripts/generate-secrets.js",
+    "generate:jwt": "node scripts/generate-secrets.js --jwt"
   },
   "jest": {
     "preset": "ts-jest",

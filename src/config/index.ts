@@ -12,6 +12,9 @@ export * from './interfaces/config.interface';
 // Validation schemas
 export * from './schemas/config.schema';
 
+// Validators
+export * from './validators/security.validator';
+
 // Decorators
 export {
   InjectConfig,
